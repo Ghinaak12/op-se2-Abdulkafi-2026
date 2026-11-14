@@ -1,24 +1,48 @@
 package business;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class VolkshochschuleModel {
 
-    public VolkshochschuleModel() {
+    private Volkshochschulkurs volkshochschulkurs;
+
+    public void leseAusDatei(String typ) throws IOException {
+
+        BufferedReader ein = new BufferedReader(
+            new FileReader("Volkshochschulkurse.csv"));
+
+        String[] zeile = ein.readLine().split(";");
+
+        this.volkshochschulkurs = new Volkshochschulkurs(
+            zeile[0],
+            Integer.parseInt(zeile[1]),
+            zeile[2],
+            Float.parseFloat(zeile[3]),
+            zeile[4].split("_"));
+
+        ein.close();
     }
 
-    public String getUeberschrift() {
-        return "Verwaltung einer Volkshochschule";
-    }
+    public void schreibeVolkshochschulkurseInCsvDatei() throws IOException {
 
-    public void schreibeInDatei(String text)
-            throws Exception {
+        BufferedWriter aus
+            = new BufferedWriter(
+                new FileWriter("VolkshochschulkurseAusgabe.csv", true));
 
-        BufferedWriter aus =
-                new BufferedWriter(
-                        new FileWriter("Text.txt"));
-
-        aus.write(text);
+        aus.write(volkshochschulkurs.gibVolkshochschuleZurueck(';'));
         aus.close();
     }
+
+    public Volkshochschulkurs getVolkshochschulkurs() {
+        return volkshochschulkurs;
+    }
+
+    public void setVolkshochschulkurs(Volkshochschulkurs volkshochschulkurs) {
+        this.volkshochschulkurs = volkshochschulkurs;
+    }
+
 }

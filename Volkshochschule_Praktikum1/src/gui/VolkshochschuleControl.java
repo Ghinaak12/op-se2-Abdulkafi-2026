@@ -1,28 +1,78 @@
 package gui;
 
-import javafx.stage.Stage;
+import business.Volkshochschulkurs;
+
+import java.io.IOException;
+
 import business.VolkshochschuleModel;
+import javafx.stage.Stage;
 
 public class VolkshochschuleControl {
 
-    private VolkshochschuleView anwView;
-    private VolkshochschuleModel anwModel;
+    private VolkshochschuleView volkshochschuleView;
+    private VolkshochschuleModel volkshochschuleModel;
 
-    public VolkshochschuleControl(Stage primaryStage) {
-        this.anwModel = new VolkshochschuleModel();
-        this.anwView = new VolkshochschuleView(
-                this, primaryStage, anwModel);
+    public VolkshochschuleControl(Stage stage) {
+        super();
+        this.volkshochschuleModel = new VolkshochschuleModel();
+        this.volkshochschuleView = new VolkshochschuleView(
+            stage, this, volkshochschuleModel);
     }
 
-    public void schreibeInDatei(String text) {
+    void nehmeVolkshochschulkursAuf() {
         try {
-            this.anwModel.schreibeInDatei(text);
-            this.anwView.zeigeInformationsfensterAn(
-                    "Der Text wurde in die Datei geschrieben.");
+            this.volkshochschuleModel.setVolkshochschulkurs(
+                new Volkshochschulkurs(
+                    volkshochschuleView.getTxtKursname().getText(),
+                    Integer.parseInt(volkshochschuleView.getTxtKursbeitrag().getText()),
+                    volkshochschuleView.getTxtWochentag().getText(),
+                    Float.parseFloat(volkshochschuleView.getTxtStartuhrzeit().getText()),
+                    volkshochschuleView.getTxtVorkenntnisse().getText().split(";")));
+
+            volkshochschuleView.zeigeInformationsfensterAn(
+                "Der Volkshochschulkurs wurde aufgenommen!");
         }
-        catch (Exception exc) {
-            this.anwView.zeigeFehlermeldungAn(
-                    "Fehler beim Schreiben in die Datei.");
+        catch(Exception exc) {
+            volkshochschuleView.zeigeFehlermeldungsfensterAn(exc.getMessage());
         }
     }
+
+    void leseAusDatei(String typ) {
+        try {
+            if("csv".equals(typ)) {
+                volkshochschuleModel.leseAusDatei(typ);
+                volkshochschuleView.zeigeInformationsfensterAn(
+                    "Der Volkshochschulkurs wurde gelesen!");
+            }
+            else {
+                volkshochschuleView.zeigeInformationsfensterAn(
+                    "Noch nicht implementiert!");
+            }
+        }
+        catch(IOException exc) {
+            volkshochschuleView.zeigeFehlermeldungsfensterAn(
+                "IOException beim Lesen!");
+        }
+        catch(Exception exc) {
+            volkshochschuleView.zeigeFehlermeldungsfensterAn(
+                "Unbekannter Fehler beim Lesen!");
+        }
+    }
+
+    void schreibeVolkshochschulkurseInCsvDatei() {
+        try {
+            volkshochschuleModel.schreibeVolkshochschulkurseInCsvDatei();
+            volkshochschuleView.zeigeInformationsfensterAn(
+                "Die Volkshochschulkurse wurden gespeichert!");
+        }
+        catch(IOException exc) {
+            volkshochschuleView.zeigeFehlermeldungsfensterAn(
+                "IOException beim Speichern!");
+        }
+        catch(Exception exc) {
+            volkshochschuleView.zeigeFehlermeldungsfensterAn(
+                "Unbekannter Fehler beim Speichern!");
+        }
+    }
+
 }
